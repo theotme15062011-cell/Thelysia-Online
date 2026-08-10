@@ -159,12 +159,21 @@ onclick="travel('Tribu des Âmes')">
 <button onclick="fightMonster()">
 ⚔ Affronter Monstre
 </button>
-
+ 
+<button onclick="fightBoss()">
+👑 Affronter un Boss
+</button>
+ 
 <button onclick="showHall()">
 🏆 Hall Of Fame
 </button>
+Afficher plus de lignes
 
-<div class="log" id="log"></div>
+<button onclick="shop()">
+💰 Boutique
+</button>
+
+  <div class="log" id="log"></div>
 
 </div>
 
@@ -215,8 +224,37 @@ level:90
 ];
 
 let player = null;
-
+ 
+const bosses = [
+ 
+{
+name:"Atlas",
+hp:1500,
+atk:120
+},
+ 
+{
+name:"Ortical",
+hp:2000,
+atk:150
+},
+ 
+{
+name:"PhiSi16",
+hp:2500,
+atk:180
+},
+ 
+{
+name:"Théotime Saint-Léger Ier",
+hp:3500,
+atk:250
+}
+ 
+];
+ 
 const classes = [
+...
 
 {
 rank:"SS+",
@@ -306,26 +344,26 @@ maxMp:c.mp,
 
 stats:{
 
-intelligence:rand(50,100),
-force:rand(50,100),
-vitesse:rand(50,100),
-endurance:rand(50,100),
-volonte:rand(50,100),
-adaptabilite:rand(50,100),
-courage:rand(50,100),
-charme:rand(50,100),
-chance:rand(50,100),
-potentiel:rand(50,100),
-planification:rand(50,100),
-economie:rand(50,100),
-autorite:rand(50,100),
-renseignement:rand(50,100),
-diplomatie:rand(50,100),
-expansion:rand(50,100),
-developpement:rand(50,100),
-resilience:rand(50,100),
-innovation:rand(50,100),
-ambition:rand(50,100)
+intelligence:rand(0,100),
+force:rand(0,100),
+vitesse:rand(0,100),
+endurance:rand(0,100),
+volonte:rand(0,100),
+adaptabilite:rand(0,100),
+courage:rand(0,100),
+charme:rand(0,100),
+chance:rand(0,100),
+potentiel:rand(0,100),
+planification:rand(0,100),
+economie:rand(0,100),
+autorite:rand(0,100),
+renseignement:rand(0,100),
+diplomatie:rand(0,100),
+expansion:rand(0,100),
+developpement:rand(0,100),
+resilience:rand(0,100),
+innovation:rand(0,100),
+ambition:rand(0,100)
 
 },
 
@@ -518,19 +556,251 @@ savePlayer();
 }
 
 function checkLevel(){
-
+ 
 while(
-
-player.xp >=
-player.level*100
-
+player.xp >= player.level*100
 ){
-
-player.xp -=
-player.level*100;
-
+ 
+player.xp -= player.level*100;
+ 
 player.level++;
+ 
+player.maxHp += 50;
+player.maxMp += 30;
+ 
+player.stats.force += 3;
+player.stats.intelligence += 3;
+player.stats.endurance += 3;
+player.stats.vitesse += 3;
+ 
+if(player.level>=10)
+player.rank="B";
+ 
+if(player.level>=20)
+player.rank="A";
+ 
+if(player.level>=35)
+player.rank="S";
+ 
+if(player.level>=50)
+player.rank="SS";
+ 
+if(player.level>=75)
+player.rank="SS+";
+ 
+log("⭐ Niveau "+player.level);
+ 
+}
+ 
+renderPlayer();
+ 
+}
 
-player.maxHp += 25;
-player.maxMp += 15;
+  function dropLoot(){
+ 
+const loot=[
+"Épée de Fer",
+"Armure Céleste",
+"Bottes Rapides",
+"Potion",
+"Cristal"
+];
+ 
+let item=
+loot[rand(0,loot.length-1)];
+ 
+player.inventory.push(item);
+ 
+log("🎁 Loot : "+item);
+ 
+}
+ 
+function shop(){
+ 
+if(!player)return;
+ 
+let choice=prompt(
+"1 Épée (50 or)\n"+
+"2 Armure (75 or)\n"+
+"3 Potion (20 or)"
+);
+ 
+if(choice=="1" && player.gold>=50){
+ 
+player.gold-=50;
+player.stats.force+=10;
+ 
+log("⚔ Épée achetée");
+ 
+}
+ 
+if(choice=="2" && player.gold>=75){
+ 
+player.gold-=75;
+player.stats.endurance+=10;
+ 
+log("🛡 Armure achetée");
+ 
+}
+ 
+if(choice=="3" && player.gold>=20){
+ 
+player.gold-=20;
+player.inventory.push("Potion");
+ 
+log("🧪 Potion achetée");
+ 
+}
+ 
+renderPlayer();
+savePlayer();
+ 
+}
+ 
+function fightBoss(){
+ 
+if(!player)return;
+ 
+let boss=
+bosses[rand(0,bosses.length-1)];
+ 
+let hp=boss.hp;
+ 
+log("👑 Boss : "+boss.name);
+ 
+while(hp>0 && player.hp>0){
+ 
+hp -=
+player.stats.force +
+player.level*5;
+ 
+if(hp<=0){
+ 
+player.gold+=1000;
+player.xp+=1000;
+ 
+log("🏆 Boss vaincu");
+log("+1000 OR");
+log("+1000 XP");
+ 
+checkLevel();
+ 
+renderPlayer();
+savePlayer();
+ 
+return;
+ 
+}
+ 
+player.hp-=boss.atk;
+ 
+}
+ 
+if(player.hp<=0){
+ 
+player.hp=1;
+ 
+log("❌ Échec contre le boss");
+ 
+}
+ 
+renderPlayer();
+savePlayer();
+ 
+}
 
+function fightMonster(){
+
+if(!player)return;
+
+const monsters=[
+
+{
+name:"Loup",
+hp:100,
+atk:15,
+xp:20,
+gold:10
+},
+
+{
+name:"Bandit",
+hp:180,
+atk:25,
+xp:35,
+gold:20
+},
+
+{
+name:"Chevalier Noir",
+hp:350,
+atk:45,
+xp:80,
+gold:50
+},
+
+{
+name:"Dragon",
+hp:800,
+atk:90,
+xp:250,
+gold:200
+}
+
+];
+
+let enemy=
+monsters[rand(0,monsters.length-1)];
+
+let monsterHp=enemy.hp;
+
+let myAttack=
+player.stats.force+
+(player.level*3)+
+rand(10,25);
+
+log("⚔ Combat contre "+enemy.name);
+
+while(monsterHp>0 && player.hp>0){
+
+monsterHp -= myAttack;
+
+if(monsterHp<=0){
+
+log("✅ "+enemy.name+" vaincu");
+
+player.gold+=enemy.gold;
+player.xp+=enemy.xp;
+
+log("+"+enemy.gold+" OR");
+log("+"+enemy.xp+" XP");
+
+if(Math.random()<0.30){
+dropLoot();
+}
+
+checkLevel();
+
+renderPlayer();
+savePlayer();
+
+return;
+
+}
+
+player.hp-=enemy.atk;
+
+}
+
+if(player.hp<=0){
+
+player.hp=Math.floor(player.maxHp/2);
+
+log("☠ Défaite");
+
+}
+
+renderPlayer();
+savePlayer();
+
+}
