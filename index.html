@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>THÉLYSIA ONLINE</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+header{
+background:#111827;
+padding:20px;
+text-align:center;
+font-size:32px;
+font-weight:bold;
+}
+
+.container{
+display:grid;
+grid-template-columns:300px 1fr 300px;
+min-height:100vh;
+}
+
+.panel{
+border:1px solid #374151;
+padding:15px;
+overflow:auto;
+}
+
+button{
+padding:8px;
+margin:5px;
+cursor:pointer;
+border:none;
+background:#2563eb;
+color:white;
+border-radius:5px;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+input{
+padding:8px;
+width:100%;
+margin-bottom:10px;
+}
+
+.card{
+background:#1e293b;
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+}
+
+.stat{
+display:flex;
+justify-content:space-between;
+padding:3px;
+}
+
+.map{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+.region{
+background:#1f2937;
+padding:30px;
+text-align:center;
+border-radius:12px;
+cursor:pointer;
+}
+
+.region:hover{
+background:#374151;
+}
+
+.log{
+height:300px;
+overflow:auto;
+background:black;
+padding:10px;
+}
+
+.rank{
+color:gold;
+font-weight:bold;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+👑 THÉLYSIA ONLINE 👑
+</header>
+
+<div class="container">
+
+<div class="panel">
+
+<h2>Personnage</h2>
+
+<input id="name" placeholder="Nom">
+
+<button onclick="createPlayer()">
+Créer
+</button>
+
+<div id="playerPanel"></div>
+
+</div>
+
+<div class="panel">
+
+<h2>Monde</h2>
+
+<div class="map">
+
+<div class="region"
+onclick="travel('Empire Éternel')">
+🏰 Empire Éternel
+</div>
+
+<div class="region"
+onclick="travel('Dominion des Ombres')">
+🌑 Dominion des Ombres
+</div>
+
+<div class="region"
+onclick="travel('Ligue du Multivers')">
+🌌 Ligue du Multivers
+</div>
+
+<div class="region"
+onclick="travel('Tribu des Âmes')">
+🌙 Tribu des Âmes
+</div>
+
+</div>
+
+<br>
+
+<button onclick="fightMonster()">
+⚔ Affronter Monstre
+</button>
+
+<button onclick="showHall()">
+🏆 Hall Of Fame
+</button>
+
+<div class="log" id="log"></div>
+
+</div>
+
+<div class="panel">
+
+<h2>Inventaire</h2>
+
+<div id="inventory"></div>
+
+<hr>
+
+<h2>Classement</h2>
+
+<div id="hall"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const hallOfFame = [
+
+{
+name:"Théotime Saint-Léger Ier",
+rank:"SS+",
+level:99
+},
+
+{
+name:"PhiSi16",
+rank:"SS",
+level:95
+},
+
+{
+name:"Ortical",
+rank:"S+",
+level:92
+},
+
+{
+name:"Atlas",
+rank:"S",
+level:90
+}
+
+];
+
+let player = null;
+
+const classes = [
+
+{
+rank:"SS+",
+name:"Empereur Stratège",
+faction:"Empire Éternel",
+hp:1350,
+mp:1050
+},
+
+{
+rank:"SS",
+name:"Souverain Assassin",
+faction:"Dominion des Ombres",
+hp:1100,
+mp:700
+},
+
+{
+rank:"S+",
+name:"Roi Visionnaire",
+faction:"Ligue du Multivers",
+hp:900,
+mp:850
+},
+
+{
+rank:"S",
+name:"Souverain Psychique",
+faction:"Tribu des Âmes",
+hp:550,
+mp:1500
+}
+
+];
+
+function rand(a,b){
+return Math.floor(
+Math.random()*(b-a+1))+a;
+}
+
+function log(message){
+
+const zone =
+document.getElementById("log");
+
+zone.innerHTML +=
+message + "<br>";
+
+zone.scrollTop =
+zone.scrollHeight;
+
+}
+
+function createPlayer(){
+
+const name =
+document.getElementById("name").value;
+
+if(!name)return;
+
+const c =
+classes[rand(0,classes.length-1)];
+
+player = {
+
+name,
+
+level:1,
+
+xp:0,
+
+gold:100,
+
+rank:c.rank,
+
+class:c.name,
+
+faction:c.faction,
+
+hp:c.hp,
+
+maxHp:c.hp,
+
+mp:c.mp,
+
+maxMp:c.mp,
+
+stats:{
+
+intelligence:rand(50,100),
+force:rand(50,100),
+vitesse:rand(50,100),
+endurance:rand(50,100),
+volonte:rand(50,100),
+adaptabilite:rand(50,100),
+courage:rand(50,100),
+charme:rand(50,100),
+chance:rand(50,100),
+potentiel:rand(50,100),
+planification:rand(50,100),
+economie:rand(50,100),
+autorite:rand(50,100),
+renseignement:rand(50,100),
+diplomatie:rand(50,100),
+expansion:rand(50,100),
+developpement:rand(50,100),
+resilience:rand(50,100),
+innovation:rand(50,100),
+ambition:rand(50,100)
+
+},
+
+inventory:[
+"Potion",
+"Cristal"
+]
+
+};
+
+savePlayer();
+renderPlayer();
+
+log(
+"Bienvenue " + player.name
+);
+
+}
+
+function savePlayer(){
+
+localStorage.setItem(
+"thelysiaPlayer",
+JSON.stringify(player)
+);
+
+}
+
+function loadPlayer(){
+
+const data =
+localStorage.getItem(
+"thelysiaPlayer"
+);
+
+if(data){
+
+player =
+JSON.parse(data);
+
+renderPlayer();
+
+}
+
+}
+
+function renderPlayer(){
+
+if(!player)return;
+
+let html = "";
+
+html +=
+"<div class='card'>";
+
+html +=
+"<h3>"+player.name+"</h3>";
+
+html +=
+"<p class='rank'>"+
+player.rank+
+"</p>";
+
+html +=
+"<p>"+player.class+"</p>";
+
+html +=
+"<p>"+player.faction+"</p>";
+
+html +=
+"<p>Niveau "+
+player.level+
+"</p>";
+
+html +=
+"<p>❤️ "+
+player.hp+
+"/"+
+player.maxHp+
+"</p>";
+
+html +=
+"<p>🔷 "+
+player.mp+
+"/"+
+player.maxMp+
+"</p>";
+
+for(let s in player.stats){
+
+html +=
+"<div class='stat'>"+
+"<span>"+s+"</span>"+
+"<span>"+player.stats[s]+"</span>"+
+"</div>";
+
+}
+
+html += "</div>";
+
+document.getElementById(
+"playerPanel"
+).innerHTML = html;
+
+renderInventory();
+
+}
+
+function renderInventory(){
+
+if(!player)return;
+
+let html = "";
+
+player.inventory.forEach(
+(item,index)=>{
+
+html +=
+
+"<div class='card'>"+
+item+
+"<button onclick='useItem("+index+")'>Utiliser</button>"+
+"</div>";
+
+}
+);
+
+document.getElementById(
+"inventory"
+).innerHTML = html;
+
+}
+
+function useItem(index){
+
+const item =
+player.inventory[index];
+
+if(item==="Potion"){
+
+player.hp += 100;
+
+if(
+player.hp >
+player.maxHp
+){
+player.hp =
+player.maxHp;
+}
+
+log("Potion utilisée");
+
+}
+
+if(item==="Cristal"){
+
+player.stats.potentiel += 5;
+
+log(
+"Potentiel +5"
+);
+
+}
+
+player.inventory.splice(
+index,
+1
+);
+
+renderPlayer();
+savePlayer();
+
+}
+
+function travel(region){
+
+if(!player)return;
+
+log(
+"Voyage vers " +
+region
+);
+
+player.xp += 20;
+
+checkLevel();
+
+savePlayer();
+
+}
+
+function checkLevel(){
+
+while(
+
+player.xp >=
+player.level*100
+
+){
+
+player.xp -=
+player.level*100;
+
+player.level++;
+
+player.maxHp += 25;
+player.maxMp += 15;
+
