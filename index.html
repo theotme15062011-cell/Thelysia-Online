@@ -253,8 +253,7 @@ atk:250
 ];
  
 const classes = [
-...
-
+ 
 {
 rank:"SS+",
 name:"Empereur Stratège",
@@ -262,7 +261,7 @@ faction:"Empire Éternel",
 hp:1350,
 mp:1050
 },
-
+ 
 {
 rank:"SS",
 name:"Souverain Assassin",
@@ -270,7 +269,7 @@ faction:"Dominion des Ombres",
 hp:1100,
 mp:700
 },
-
+ 
 {
 rank:"S+",
 name:"Roi Visionnaire",
@@ -278,7 +277,7 @@ faction:"Ligue du Multivers",
 hp:900,
 mp:850
 },
-
+ 
 {
 rank:"S",
 name:"Souverain Psychique",
@@ -286,8 +285,9 @@ faction:"Tribu des Âmes",
 hp:550,
 mp:1500
 }
-
+ 
 ];
+
 
 function rand(a,b){
 return Math.floor(
@@ -801,5 +801,27 @@ log("☠ Défaite");
 
 renderPlayer();
 savePlayer();
-
+loadPlayer();
+showHall();
+function showHall(){
+ 
+let text="";
+ 
+hallOfFame
+.sort((a,b)=>b.level-a.level)
+.forEach(p=>{
+ 
+text += `
+<div class="card">
+${p.name} | ${p.rank} | Niveau ${p.level}
+</div>
+`;
+ 
+});
+ 
+document.getElementById("hall").innerHTML=text;
+ 
 }
+</script>
+</body>
+</html>
