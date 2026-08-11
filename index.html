@@ -803,6 +803,7 @@ renderPlayer();
 savePlayer();
 loadPlayer();
 showHall();
+  
 function showHall(){
  
 let text="";
@@ -811,7 +812,8 @@ hallOfFame
 .sort((a,b)=>b.level-a.level)
 .forEach(p=>{
  
-text += `
+text +=
+`
 <div class="card">
 ${p.name} | ${p.rank} | Niveau ${p.level}
 </div>
@@ -822,6 +824,10 @@ ${p.name} | ${p.rank} | Niveau ${p.level}
 document.getElementById("hall").innerHTML=text;
  
 }
+ 
+loadPlayer();
+showHall();
+...
 </script>
 </body>
 </html>
