@@ -792,37 +792,54 @@ player.hp-=enemy.atk;
 }
 
 if(player.hp<=0){
-
+ 
 player.hp=Math.floor(player.maxHp/2);
-
+ 
 log("☠ Défaite");
-
+ 
 }
-
+ 
 renderPlayer();
 savePlayer();
-loadPlayer();
-showHall();
-  
+ 
+}
+ 
 function showHall(){
+2
  
+3
 let text="";
+4
  
+5
 hallOfFame
+6
 .sort((a,b)=>b.level-a.level)
+7
 .forEach(p=>{
+8
  
-text +=
-`
+9
+text += `
+10
 <div class="card">
+11
 ${p.name} | ${p.rank} | Niveau ${p.level}
+12
 </div>
+13
 `;
+14
  
+15
 });
+16
  
+17
 document.getElementById("hall").innerHTML=text;
+18
  
+19
 }
  
 loadPlayer();
