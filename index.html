@@ -805,41 +805,34 @@ savePlayer();
 }
  
 function showHall(){
-2
  
-3
-let text="";
-4
+if(!Array.isArray(hallOfFame)){
  
-5
+console.error(
+"hallOfFame n'est pas un tableau",
 hallOfFame
-6
+);
+ 
+return;
+ 
+}
+ 
+let text="";
+ 
+hallOfFame
 .sort((a,b)=>b.level-a.level)
-7
 .forEach(p=>{
-8
  
-9
 text += `
-10
 <div class="card">
-11
 ${p.name} | ${p.rank} | Niveau ${p.level}
-12
 </div>
-13
 `;
-14
  
-15
 });
-16
  
-17
 document.getElementById("hall").innerHTML=text;
-18
  
-19
 }
  
 loadPlayer();
