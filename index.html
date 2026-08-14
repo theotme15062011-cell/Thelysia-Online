@@ -116,6 +116,18 @@ font-weight:bold;
 
 <h2>Personnage</h2>
 
+  <input id="email" type="email" placeholder="Adresse email">
+ 
+<input id="password" type="password" placeholder="Mot de passe">
+ 
+<button onclick="registerUser()">
+Créer un compte
+</button>
+ 
+<button onclick="loginUser()">
+Connexion
+</button>
+
 <button onclick="createPlayer()">
 Créer
 </button>
@@ -833,7 +845,59 @@ document.getElementById("hall").innerHTML=text;
  
 loadPlayer();
 showHall();
+ function registerUser(){
  
+const email =
+document.getElementById("email").value;
+ 
+const password =
+document.getElementById("password").value;
+ 
+if(email === "" || password === ""){
+ 
+alert("Remplis email et mot de passe");
+return;
+ 
+}
+ 
+localStorage.setItem(
+"user_"+email,
+password
+);
+ 
+alert("Compte créé");
+ 
+}
+ 
+function loginUser(){
+ 
+const email =
+document.getElementById("email").value;
+ 
+const password =
+document.getElementById("password").value;
+ 
+const savedPassword =
+localStorage.getItem(
+"user_"+email
+);
+ 
+if(savedPassword === password){
+ 
+alert("Connexion réussie");
+ 
+localStorage.setItem(
+"loggedUser",
+email
+);
+ 
+}else{
+ 
+alert("Identifiants incorrects");
+ 
+}
+ 
+}
 </script>
 </body>
 </html>
