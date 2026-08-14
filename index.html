@@ -315,11 +315,26 @@ zone.scrollHeight;
 
 }
 function createPlayer(){
-
+ 
+const nameInput =
+document.getElementById("name");
+ 
+if(!nameInput){
+ 
+alert("Champ nom introuvable");
+return;
+ 
+}
+ 
 const name =
-document.getElementById("name").value;
-
-if(!name)return;
+nameInput.value;
+ 
+if(!name){
+ 
+alert("Entre un nom");
+return;
+ 
+}
 
 const c =
 classes[rand(0,classes.length-1)];
